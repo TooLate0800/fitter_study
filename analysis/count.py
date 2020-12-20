@@ -1,13 +1,13 @@
 
 
-import argparse
-import pickle
-import scipy
-from scipy.stats import norm
+#import argparse
+#import pickle
+#import scipy
+#from scipy.stats import norm
 import numpy
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.mlab as mlab
+#import matplotlib.pyplot as plt
+#import matplotlib.mlab as mlab
 #==========load txt file
 data1 = numpy.loadtxt('../fit/fit_result/test.txt', float)#load the fitted radius
 #radius = data1[:,0]

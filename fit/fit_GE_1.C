@@ -110,7 +110,7 @@ int xyminimizer(const char * minName = "Minuit", const char * algoName = ""){
 
 int main(Int_t argc, char *argv[]){
  
- for(int i = 0; i <  100000; i++){//repetition times
+ for(int i = 0; i <  1; i++){//repetition times
   //string fname1=Form("/var/phy/project/mepg/jz271/runPRad/model_generator/robust_table/700_table_%d.txt",i+1);
   //string fname1=Form("/var/phy/project/mepg/jz271/runPRad/model_generator/robust_table/1400_table_%d.txt",i+1);
   string fname1=Form("../generator/robust_table/1GeV_table_%d.txt",i+1);//input files

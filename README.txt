@@ -7,7 +7,7 @@ Work Flow:
 
 1. data/
  1) CrossSections.dat: Mainz cross section data
- 2) Carl-norm.dat: Mainz G_E data from Keith Griffioen and Carl Carlson
+ 2) Carl-norm.dat: Mainz G_E data from Keith Griffioen and Carl Carlson, the three column: Q^2(fm^-2), GE, dGE
 
 2. generator/
  1) What it does: obtain Q^2 and stat uncertainty of GE from the input file in /data, use a selected model to generate pseudo-data, the central values of GE are smeared by the overall normalization and the statistical uncertainties.
@@ -32,10 +32,13 @@ Work Flow:
        a. the definition of the fitter, radius should be one of the fitting parameter
        b. the input and output files
        c. repetition times
+Notice:
+    * If you want to fit only one set of data, you can modify the repetition times to 1 in the .C file, then make, and run: ./filename data_file (for example:./fit_GE_1 ../data/Carl-norm.dat) you will see the fitting result as well as essential information such as the chi^2 value of the fit. 
+    * If you fail to make the file, you can try to delete the corresponding .o and .d files and try it again. 
  5) roofit.C: Using TGraphErrors to fit, can not handle various sets of data with different floating parameters in one fit 
 
 4. analysis/
  1) What it does: 
     count.py: calculate the rms and mean value of the fitted radius distribution   
     draw_rms_bias.py: draw the bias-variance figures as the ones in Xuefei's paper:https://arxiv.org/pdf/1803.01629.pdf
- 2) How to run: source set_py3.8.sh -> python3.8 filename.py, the figure is saved as mygraph.png in this directory, to open it, type "display mygraph.png"
+ 2) How to run: python filename.py, the figure is saved as mygraph.png in this directory, to open it, type "display mygraph.png"
