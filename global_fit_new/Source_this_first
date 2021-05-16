@@ -1,0 +1,4 @@
+export ROOTSYS=/var/phy/project/mepg/wx19/SoLID_Tracking/Digitization/root
+export LD_LIBRARY_PATH=$ROOTSYS/lib/
+source $ROOTSYS/bin/thisroot.sh
+
