@@ -8,9 +8,9 @@ using namespace std;
 
 //data
 Int_t ndata,ndata_2;
-Double_t Q2[1000],GE[1000],dGE[1000];
-Double_t Q2_2[1000],GE_2[1000],dGE_2[1000];
-Double_t z_arr[1000],z_arr2[1000];
+Double_t Q2[2000],GE[2000],dGE[2000];
+Double_t Q2_2[2000],GE_2[2000],dGE_2[2000];
+Double_t z_arr[2000],z_arr2[2000];
 Double_t fp, fp_2;
 Double_t fperr, fperr_2;
 Double_t pd_fit;
@@ -35,6 +35,7 @@ int readdata(string fname, double modi_factor)
 
   for(int i=0;i<ndata;i++){
     infile >> Q2[i] >> GE[i] >> dGE[i];
+    //cout<< Q2[i] << GE[i] <<dGE[i]<<endl;
     //if (i >= 19) { dGE[i] *= modi_factor; }
     //if (i == ndata-1) dGE[i] *= modi_factor;
     //dGE[i] *= modi_factor;

@@ -43,7 +43,7 @@ clean:
 	-$(DEL_FILE) $(TARGET)
 
 
-RobustGenerator: RobustGenerator.cxx
+RobustGenerator: RobustGenerator_loop_cut.cxx
 	$(CXX) $(CXXFLAGS) -o $@ $< $(INCPATH) $(LIBS)
 
 install:   FORCE

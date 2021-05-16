@@ -200,27 +200,28 @@ double GetGE(double qq, int FF)
 
 using namespace std;
 
-int main(int argc, char *argv[])
+int main()
+//int main(int argc, char *argv[])
 {
-    int FF = 3;//choose different models for data generation
-    if (argc == 2) FF = stoi(argv[1]);
+    int FF = 9;//choose different models for data generation
+    //if (argc == 1) FF = stoi(argv[1]);
     
     gRandom->SetSeed(0);
    
     ifstream inFile[3];
-    inFile[0].open("ge_uncertainty_table/1GeV_GE.txt");//the input file, need to obtain Q^2 points and the stat uncer of GE
+    inFile[0].open("/var/phy/project/mepg/jz271/fitter_study/data/Carl-norm.dat");//the input file, need to obtain Q^2 points and the stat uncer of GE
     inFile[1].open("ge_uncertainty_table/2GeV_GE.txt");
 //    inFile[2].open("ge_uncertainty_table/3.3GeV_ge_uncertainty_2times.txt");
     
     double EBeam[3][100];
     double theta[3][100];
     double error[3][100];
-    double Q2[3][100];
-    double GE[3][100];
-    double dGE[3][100];
+    double Q2[3][2000];
+    double GE[3][2000];
+    double dGE[3][2000];
     int count[3];
     
-    for (int i=0; i<2; i++){
+    for (int i=0; i<1; i++){
     //for (int i=0; i<3; i++){
         inFile[i]>>count[i];
         
@@ -232,22 +233,21 @@ int main(int argc, char *argv[])
         inFile[i].close();
     }
     
-    for (int n=0; n<100000; n++){//repeat for X times/ generate X sets of pseudo-data
+    for (int n=0; n<10000; n++){//repeat for X times/ generate X sets of pseudo-data
         if (n%1000 == 0) cout<<n<<endl;
-        for (int i=0; i<2; i++){
+        for (int i=0; i<1; i++){
             ofstream outFile;
-            outFile.open(Form("robust_table/%dGeV_table_%d.txt", i+1, n+1));//define the output file name
+            //outFile.open("dipole_smeared.txt");//define the output file name
+            outFile.open(Form("Model_9/%dGeV_table_%d.txt", i+1, n+1));//define the output file name
             outFile<<count[i]<<endl;
             double norm = gRandom->Gaus(1., 0.002);//overall normalization
             
             for (int j=0; j<count[i]; j++){
+                //cout<<Q2[i][j]*tofm<<" "<<GE[i][j]<<endl;
                 //double thisGE = GE[i][j]/norm + gRandom->Gaus(0., dGE[i][j]/2);
                 double thisGE = GE[i][j]/norm + gRandom->Gaus(0., dGE[i][j]);//smear the stat. uncertainty to the central value of GE
                 //double thisGE = GE[i][j];
-                //double smearedQ2 = Q2[i][j]*gRandom->Gaus(1., 0.01);
-                //double smearedQ2 = Q2[i][j]*gRandom->Gaus(1., 0.1);
                 double thisdGE = dGE[i][j];
-                //outFile<<Q2[i][j]*tofm<<" "<<thisGE<<" "<<dGE[i][j]/2<<endl;//devided by 2
                 //outFile<<smearedQ2*tofm<<" "<<thisGE<<" "<<thisdGE<<endl;//write the pseudo-data to the files
                 outFile<<Q2[i][j]*tofm<<" "<<thisGE<<" "<<dGE[i][j]<<endl;//write the pseudo-data to the files
             }

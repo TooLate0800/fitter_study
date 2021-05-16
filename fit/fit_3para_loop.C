@@ -40,9 +40,11 @@ double GE_fun(const double &Q2, const double &R, const double &pd, const double 
   double R2=R*R;
 
   // GE=1.-Q2*R2/6.;
-  //GE=fp*(1.-R2*Q2/6.+pd*Q2)/(1.+pd*Q2+pd1*Q2*Q2);//R12
+  GE=fp*(1.-R2*Q2/6.+pd*Q2)/(1.+pd*Q2+pd1*Q2*Q2);//R12
   //GE=fp*(1.-R2*Q2/6.+pd*Q2+pd1*Q2*Q2)/(1.+pd*Q2);//R21
-  GE=fp*(1/(1+(R2*Q2/6)/(1+pd*Q2/(1+pd1*Q2))));//CF3
+  //GE=fp*(1/(1+(R2*Q2/6)/(1+pd*Q2/(1+pd1*Q2))));//CF3
+  //
+  //GE=fp*(1.-R2*Q2/6.+pd*Q2*Q2+pd1*Q2*Q2*Q2);//poly3
   //GE=fp*(1.-R2*Q2/6.+pd*Q2+pd1*Q2*Q2)/(1.+pd*Q2);
   return GE;
 }
@@ -52,8 +54,8 @@ double chi2(const double * fitpara){
   double R=fitpara[0];
   double pd=fitpara[1];
   double fp1=fitpara[2];
-  double fp2=fitpara[3];
-  double pd1=fitpara[4];
+  //double fp2=fitpara[3];
+  double pd1=fitpara[3];
 
   double Q2v,GE_cal,GE0,GEd;
   double result=0.;
@@ -65,12 +67,12 @@ double chi2(const double * fitpara){
     result=result+(GE_cal-GE0)*(GE_cal-GE0)/(GEd*GEd);
   }
 
-  for(int i=0;i<ndata_2;i++){
-    Q2v=Q2_2[i];GE0=GE_2[i];GEd=dGE_2[i];
-    GE_cal=GE_fun(Q2v,R,pd,fp2,pd1);
+  //for(int i=0;i<ndata_2;i++){
+  //  Q2v=Q2_2[i];GE0=GE_2[i];GEd=dGE_2[i];
+  //  GE_cal=GE_fun(Q2v,R,pd,fp2,pd1);
 
-    result=result+(GE_cal-GE0)*(GE_cal-GE0)/(GEd*GEd);
-  }
+  //  result=result+(GE_cal-GE0)*(GE_cal-GE0)/(GEd*GEd);
+  //}
 
   return result;
 }
@@ -78,26 +80,28 @@ double chi2(const double * fitpara){
 
 int xyminimizer(const char * minName = "Minuit", const char * algoName = ""){
   ROOT::Math::Minimizer* min = ROOT::Math::Factory::CreateMinimizer(minName, algoName);
-  min->SetMaxFunctionCalls(100000); // for Minuit
-  min->SetMaxIterations(10000);  // for GSL 
-  min->SetTolerance(0.1);
+  min->SetMaxFunctionCalls(1000000); // for Minuit
+  min->SetMaxIterations(100000);  // for GSL 
+  min->SetTolerance(1);
   min->SetPrintLevel(1);   //output fit info
   // min->SetPrintLevel(0);   //not output fit info
 
-  ROOT::Math::Functor f(&chi2,5);
-  //ROOT::Math::Functor f(&chi2,4);
+  //ROOT::Math::Functor f(&chi2,5);
+  ROOT::Math::Functor f(&chi2,4);
   min->SetFunction(f);
 
 
-  double step[5],variable[5];
-  step[0]=0.001;step[1]=0.0001;step[2]=0.0001;step[3]=0.0001;step[4]=0.00001;
-  variable[0]=9.19364e-02;variable[1]=9.19364e-02;variable[2]=1.0;variable[3]=1.0;variable[4]=9.19364e-02;
+  double step[4],variable[4];
+  //step[0]=0.01;step[1]=0.1;step[2]=0.1;step[3]=0.01;//step[4]=0.00001;
+  //variable[0]=8.79993e-01;variable[1]=2.34642e-01;variable[2]=1.0;variable[3]=1.02160e-02;//variable[4]=9.19364e-02;
+  step[0]=0.001;step[1]=0.001;step[2]=0.1;step[3]=0.001;//step[4]=0.00001;
+  variable[0]=8.29812e-01;variable[1]=1.24619e-01;variable[2]=1.0;variable[3]=4.50404e-03;//variable[4]=9.19364e-02;
 
-  min->SetLimitedVariable(0, "Rp", variable[0], step[0], -100.0, 100.0);
-  min->SetLimitedVariable(1, "pd", variable[1], step[1], -100.0, 100.0);
+  min->SetLimitedVariable(0, "Rp", variable[0], step[0], 0.7, 1.0);
+  min->SetLimitedVariable(1, "pd", variable[1], step[1], -500.0, 500.0);
   min->SetLimitedVariable(2, "fp1", variable[2], step[2], 0.9, 1.1);
-  min->SetLimitedVariable(3, "fp2", variable[3], step[3], 0.9, 1.1);
-  min->SetLimitedVariable(4, "pd1", variable[4], step[4], -5.0, 5.0);
+  //min->SetLimitedVariable(3, "fp2", variable[3], step[3], 0.9, 1.1);
+  min->SetLimitedVariable(3, "pd1", variable[3], step[3], -500.0, 500.0);
 
   min->Minimize();
 
@@ -105,8 +109,8 @@ int xyminimizer(const char * minName = "Minuit", const char * algoName = ""){
   Rfit=xsfit[0];
   pd_fit=xsfit[1];
   fp=xsfit[2];
-  fp_2=xsfit[3];
-  pd1_fit=xsfit[4];
+  //fp_2=xsfit[3];
+  pd1_fit=xsfit[3];
   //pd2_fit=xsfit[5];
 
   chi2fit=f(xsfit);
@@ -115,8 +119,8 @@ int xyminimizer(const char * minName = "Minuit", const char * algoName = ""){
   Rfiterr=xsfiterr[0];
   pd_fiterr=xsfiterr[1];
   fperr=xsfiterr[2];
-  fperr_2=xsfiterr[3];
-  pd1_fiterr=xsfiterr[4];
+  //fperr_2=xsfiterr[3];
+  pd1_fiterr=xsfiterr[3];
   //pd2_fiterr=xsfiterr[5];
 
 
@@ -126,34 +130,20 @@ int xyminimizer(const char * minName = "Minuit", const char * algoName = ""){
 
 int main(Int_t argc, char *argv[]){
  for(int i = 0; i <  10000; i++){
-  string fname1=Form("/home/jz271/DRad/pydradana/try/smear/smear_DRad/smear_all_para/SOG_1e4_pm10/1GeV_smear_cs_%d.txt",i+1);
-  string fname2=Form("/home/jz271/DRad/pydradana/try/smear/smear_DRad/smear_all_para/SOG_1e4_pm10/2GeV_smear_cs_%d.txt",i+1);
-
+  //string fname1=Form("/var/phy/project/mepg/jz271/fitter_study/generator/Model_1/1GeV_table_%d.txt",i+1);//input files
+  string fname1=Form("/var/phy/project/mepg/jz271/fitter_study/generator/Mainz_PRad_range/Model_1/1GeV_table_%d.txt",i+1);//input files
   
-  if (argc == 3){
+  if (argc == 2){
       fname1 = argv[1];
-      fname2 = argv[2];
   }
   
   double modiFactor = 1.;
-  if (argc == 4){
-      fname1 = argv[1];
-      fname2 = argv[2];
-      
-      istringstream ss( argv[3] );
-      double n;
-      ss >> n;
-      modiFactor += n/33;
-      cout << modiFactor << endl;
-  }
+
+  readdata(fname1, modiFactor);
 
 
-
-  readdata(fname1, fname2, modiFactor);
-
-
-  double para[6];
-  para[0]=8.07962e-01; para[1]=1.03484e-01; para[2]=9.99736e-01; para[3]=9.98915e-01; para[4]=1.03484e-02; para[5]=1.03484e-02; 
+  double para[4];
+  para[0]=8.07962e-01; para[1]=1.03484e-01; para[2]=9.99736e-01; para[3]=9.98915e-01; //para[4]=1.03484e-02; para[5]=1.03484e-02; 
   double chi2_test=chi2(para);
   cout << "chi2 test= " << chi2_test << endl;
 
@@ -164,7 +154,7 @@ int main(Int_t argc, char *argv[]){
   cout << "chi2fit= " << chi2fit << " , Rfit= " << Rfit << " , Rfiterr= " << Rfiterr << endl;
   
   ofstream outFile1;
-  outFile1.open("DRad_fit_result/CF3_smearedSOG_20200915.txt", std::ios_base::app);
+  outFile1.open("fit_result/R12check2_Model1_1e4.txt", std::ios_base::app);
   outFile1<<Rfit<<endl;
   outFile1.close();
   

@@ -8,7 +8,7 @@ using namespace std;
 
 //data
 Int_t ndata,ndata_2,ndata_3;
-Double_t Q2[1000],GE[1000],dGE[1000];
+Double_t Q2[2000],GE[2000],dGE[2000];
 Double_t Q2_2[1000],GE_2[1000],dGE_2[1000];
 Double_t Q2_3[1000],GE_3[1000],dGE_3[1000];
 Double_t z_arr[1000],z_arr2[1000], z_arr3[1000];

@@ -41,6 +41,11 @@ double GE_fun(const double &Q2, const double &R, const double &pd, const double 
   double R2=R*R;
   //GE=fp*(1.+R*Q2)/(1.+pd*Q2);//rational_1_1
   GE=fp*(1.-R2*Q2/6.+pd*Q2)/(1.+pd*Q2);//definition of rational_1_1
+  //GE=fp*(1.-R2*Q2/6.+pd*Q2*Q2);//poly_2nd
+  //GE=fp*(1/(1+(R2*Q2/6)/(1+pd*Q2)));//CF2
+  
+
+
 
   return GE;
 }
@@ -68,10 +73,10 @@ double chi2(const double * fitpara){
 
 int xyminimizer(const char * minName = "Minuit", const char * algoName = ""){
   ROOT::Math::Minimizer* min = ROOT::Math::Factory::CreateMinimizer(minName, algoName);
-  min->SetMaxFunctionCalls(100000); // for Minuit
-  min->SetMaxIterations(10000);  // for GSL 
-  //min->SetTolerance(1);
-  min->SetTolerance(0.1);
+  min->SetMaxFunctionCalls(1000000); // for Minuit
+  min->SetMaxIterations(10000000);  // for GSL 
+  min->SetTolerance(1);
+  //min->SetTolerance(0.1);
   min->SetPrintLevel(1);   //output fit info
   // min->SetPrintLevel(0);   //not output fit info
 
@@ -79,13 +84,13 @@ int xyminimizer(const char * minName = "Minuit", const char * algoName = ""){
   min->SetFunction(f);
 
 
-  double step[2],variable[2];
-  step[0]=0.001;step[1]=0.0001;step[2]=0.0001;
-  variable[0]=0.87;variable[1]=7.19364e-01;variable[2]=1.0;
+  double step[3],variable[3];
+  step[0]=0.001;step[1]=0.01;step[2]=0.001;
+  variable[0]=0.85;variable[1]=7.19364e-03;variable[2]=1.0;
 
   //define the fitting range of each parameter
-  min->SetLimitedVariable(0, "Rp", variable[0], step[0],  0.0, 10.5);
-  min->SetLimitedVariable(1, "pd", variable[1], step[1], -1.0, 1.0);
+  min->SetLimitedVariable(0, "Rp", variable[0], step[0],  0.7, 1.0);
+  min->SetLimitedVariable(1, "pd", variable[1], step[1], -500.0, 500.0);
   min->SetLimitedVariable(2, "fp1", variable[2], step[2], 0.9, 1.1);
 
   min->Minimize();
@@ -113,15 +118,18 @@ int main(Int_t argc, char *argv[]){
  for(int i = 0; i <  1; i++){//repetition times
   //string fname1=Form("/var/phy/project/mepg/jz271/runPRad/model_generator/robust_table/700_table_%d.txt",i+1);
   //string fname1=Form("/var/phy/project/mepg/jz271/runPRad/model_generator/robust_table/1400_table_%d.txt",i+1);
-  string fname1=Form("../generator/robust_table/1GeV_table_%d.txt",i+1);//input files
+  string fname1="../data/Carl-norm_PRad_range.dat";//input files
+  //string fname1=Form("/var/phy/project/mepg/jz271/fitter_study/bootstrap/Mainz_bootstrap_PRad_60bins/1GeV_table_%d.txt",i+1);//input files
+  //string fname1=Form("/var/phy/project/mepg/jz271/fitter_study/bootstrap/Mainz_bootstrap_weighted_6points/1GeV_table_%d.txt",i+1);//input files
+  //string fname1=Form("/var/phy/project/mepg/jz271/fitter_study/generator/Mainz_PRad_range/Model_1/1GeV_table_%d.txt",i+1);//input files
   
 
-  if (argc == 3){
+  if (argc == 2){
       fname1 = argv[1];
   }
   
   double modiFactor = 1.;
-  if (argc == 4){
+  if (argc == 2){
       fname1 = argv[1];
       
       istringstream ss( argv[3] );
@@ -147,9 +155,16 @@ int main(Int_t argc, char *argv[]){
 
           cout << "chi2fit= " << chi2fit << " , Rfit= " << Rfit << " , Rfiterr= " << Rfiterr << endl;
           ofstream outFile1, outFile2, outFile3, outFile4;
-          outFile1.open("fit_result/test.txt", std::ios_base::app);//output file
-          outFile1<<Rfit<<endl;
+          outFile1.open("fit_result/Rfit_R11_bootstrap_MainzinPRad_60bins.txt", std::ios_base::app);//output file
+          //outFile1<<Rfit<<endl;
           outFile1.close();
+          outFile2.open("fit_result/Rfiterr_R11_bootstrap_MainzinPRad_60bins.txt", std::ios_base::app);//output file
+          //outFile2<<Rfiterr<<endl;
+          outFile2.close();
+          outFile3.open("fit_result/chi2_R11_bootstrap_MainzinPRad_60bins.txt", std::ios_base::app);//output file
+          //outFile3<<chi2fit/(120-3)<<endl;
+          outFile3.close();
+          //cout<<chi2fit/(1422-3)<<endl;
 //      }
   }
   
