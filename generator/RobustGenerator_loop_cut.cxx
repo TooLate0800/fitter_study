@@ -234,7 +234,7 @@ for (int k=0; k<9;k++){
             inFile[i]>>Q2[i][j]>>GE[i][j]>>dGE[i][j];//loading the information from the input file
             Q2[i][j] = Q2[i][j]/tofm;//pay attention to the dimension of Q^2 (default:fm^-2)
             GE[i][j] = GetGE(Q2[i][j], FF);//use the selected form factor model to calculate GE value at Q^2 (GeV^2)
-            if (Q2[i][j]<0.25){
+            if (Q2[i][j]<0.25){//================Choose Q^2_max cut off here===================
                 count_cut++;
             }
         }
@@ -260,7 +260,7 @@ for (int k=0; k<9;k++){
                 //double thisGE = GE[i][j];
                 double thisdGE = dGE[i][j];
                 //outFile<<smearedQ2*tofm<<" "<<thisGE<<" "<<thisdGE<<endl;//write the pseudo-data to the files
-                if (Q2[i][j]<0.25){
+                if (Q2[i][j]<0.25){//================Choose Q^2_max cut off here===================
                     outFile<<Q2[i][j]*tofm<<" "<<thisGE<<" "<<dGE[i][j]<<endl;//write the pseudo-data to the files
                 }
             }
